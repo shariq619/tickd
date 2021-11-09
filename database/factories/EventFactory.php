@@ -15,11 +15,12 @@ class EventFactory extends Factory
      */
     public function definition()
     {
-        $user_id = $this->faker->randomElement([1,2,3]);
+        //$user_id = $this->faker->randomElement([1,2,3]);
+        $bid = 2;
         $status = $this->faker->randomElement(['Coming','Active','Past','Active']);
 
         return [
-            'user_id' => $user_id,
+            'business_id' => $bid,
             'event_image' => '', // password
             'event_name' => $this->faker->name(),
             'event_starting_date' => Carbon::now()->subDays(500)->format('Y-m-d'),

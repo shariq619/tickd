@@ -18,10 +18,12 @@ class UserFactory extends Factory
 
         $gender = $this->faker->randomElement(['male','female']);
         $status = $this->faker->randomElement(['0','1']);
+        $user_type = $this->faker->randomElement(['user','business']);
 
         return [
             'name' => $this->faker->name(),
             'username' => $this->faker->name(),
+            'user_type' => $user_type,
             'bio' => $this->faker->paragraph(),
             'referal_code' =>  Str::random(10),
             'email' => $this->faker->unique()->safeEmail(),

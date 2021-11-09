@@ -21,7 +21,20 @@ class CreateFollowersTable extends Migration
             $table->timestamps();
         });
 
+        Follower::create([
+           'follower_id' => 2,
+           'leader_id' => 1,
+        ]);
 
+        Follower::create([
+            'follower_id' => 3,
+            'leader_id' => 1,
+        ]);
+
+        Follower::create([
+            'follower_id' => 1,
+            'leader_id' => 2,
+        ]);
 
     }
 

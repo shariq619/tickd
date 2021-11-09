@@ -59,4 +59,20 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'leader_id')->withTimestamps();
     }
 
+    public function user_badges()
+    {
+        return $this->hasMany(UserBadge::class);
+    }
+
+    public function user_groups()
+    {
+        return $this->hasMany(UserGroup::class);
+    }
+
+   /* public function total_badges()
+    {
+        return $this->id;
+    }*/
+
+
 }

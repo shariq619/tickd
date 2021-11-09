@@ -14,6 +14,7 @@ use App\Http\Requests\User\SendOtpRequest;
 use App\Http\Requests\User\SignupRequest;
 use App\Http\Requests\User\UpdateProfileInfoRequest;
 use App\Http\Requests\User\VerifyTokenRequest;
+use App\Models\Follower;
 use App\Models\StoreToken;
 use App\Models\User;
 use Carbon\Carbon;
@@ -227,8 +228,28 @@ class AuthController extends Controller
     public function getProfile()
     {
         if (auth('api')->check()) {
-            $data = auth('api')->user();
-            return api_success("Get profile info", ['data' => $data]);
+
+            if(request()->filled('user_id')){
+                $user =  User::find(request()->user_id);
+                $data = $user->load('user_badges.badge');
+
+                foreach($data->user_badges as $badge){
+                    unset($badge->badge->business_id);
+                    unset($badge->badge->created_at);
+                    unset($badge->badge->updated_at);
+                    $badges[] = $badge->badge;
+                }
+
+                $u =   User::find(request()->user_id);
+                $u['badges'] = $badges;
+                $u['total_badges'] = count($badges);
+                return api_success("Get profile info", ['data' => $u]);
+
+            } else {
+                $data = auth('api')->user();
+                return api_success("Get profile info", ['data' => $data]);
+            }
+
         } else {
             return api_error('PLease login first');
         }
@@ -275,15 +296,81 @@ class AuthController extends Controller
         return api_error('Unable to logout');
     }
 
-    // get badges
-
-    public function getBadges()
+    // get user badges
+    public function getUserBadges()
     {
+        $badges = [];
         $user = auth('api')->user();
-        $data = $user->load('badges');
-        return api_success('Badges',$data);
+        $data = $user->load('user_badges.badge');
+        foreach($data->user_badges as $badge){
+            unset($badge->badge->business_id);
+            unset($badge->badge->created_at);
+            unset($badge->badge->updated_at);
+
+            if(request()->filled('badge_id') && request()->badge_id == $badge->badge->id){
+                $badges[] = $badge->badge;
+            } elseif(!request()->filled('badge_id')) {
+                $badges[] = $badge->badge;
+            }
+
+        }
+        if(count($badges)){
+            return api_success('Badges',$badges);
+        } else {
+            return api_error('Badges not found.');
+        }
     }
 
+    // get user groups
+    public function getUserGroups()
+    {
+        $groups = [];
+        $user = auth('api')->user();
+        $data = $user->load('user_groups');
+
+        foreach($data->user_groups as $group){
+            unset($group->user_id);
+            unset($group->badge_id);
+            unset($group->created_at);
+            unset($group->updated_at);
+
+            if(request()->filled('group_id') && request()->group_id == $group->id){
+                $groups[] = $group;
+            } elseif(!request()->filled('group_id')) {
+                $groups[] = $group;
+            }
+        }
+        if(count($groups)){
+            return api_success('Groups',$groups);
+        } else {
+            return api_error('Groups not found.');
+        }
+    }
+
+    // get user cities
+    public function getUserCities()
+    {
+        $cities = [];
+        $user = auth('api')->user();
+        $data = $user->load('user_badges.badge.city');
+        foreach($data->user_badges as $badge){
+            unset($badge->badge->city->created_at);
+            unset($badge->badge->city->updated_at);
+
+
+            if(request()->filled('city_id') && request()->city_id == $badge->badge->city->id){
+                $cities[] = $badge->badge->city;
+            } elseif(!request()->filled('city_id')) {
+                $cities[] = $badge->badge->city;
+            }
+
+        }
+        if(count($cities)){
+            return api_success('Cities',array_unique($cities));
+        } else {
+            return api_error('Cities not found.');
+        }
+    }
 
     // Followers & Followings
 
@@ -294,6 +381,30 @@ class AuthController extends Controller
 
         $data = $user->load('followers');
         return api_success('Followers', $data);
+    }
+
+    public function followUser()
+    {
+        $follow = false;
+        if(request()->filled('follower_id')){
+            // check if its already following or not
+            $f = Follower::where('follower_id',auth('api')->user()->id)->where('leader_id',request()->follower_id)->first();
+
+            if($f){
+                return api_error('Already following.');
+            } else {
+                $follow =  Follower::create([
+                    'follower_id' => auth('api')->user()->id,
+                    'leader_id' => request()->follower_id
+                ]);
+            }
+        }
+
+        if($follow){
+            return api_success('Successfully following',$follow);
+        } else {
+            return api_error('Failed to follow.');
+        }
     }
 
     public function getFollowings()

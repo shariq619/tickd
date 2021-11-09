@@ -34,9 +34,14 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('get-profile', [AuthController::class, 'getProfile']);
         Route::post('edit-profile', [AuthController::class, 'editProfile']);
 
-        Route::post('get-badges', [AuthController::class, 'getBadges']);
+        Route::post('get-user-badges', [AuthController::class, 'getUserBadges']);
+        Route::post('get-user-groups', [AuthController::class, 'getUserGroups']);
+        Route::post('get-user-cities', [AuthController::class, 'getUserCities']);
 
         Route::post('get-followers', [AuthController::class, 'getFollowers']);
+
+        Route::post('follow-user', [AuthController::class, 'followUser']);
+
         Route::post('get-followings', [AuthController::class, 'getFollowings']);
 
         Route::post('logout', [AuthController::class, 'logout']);

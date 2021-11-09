@@ -2,10 +2,10 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BadgeFactory extends Factory
+class DidYouKnowFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -14,13 +14,14 @@ class BadgeFactory extends Factory
      */
     public function definition()
     {
-        //$bid = $this->faker->randomElement(User::where('user_type','business')->first()->pluck('id'));
+        //$business_id = $this->faker->randomElement([1,2,3]);
         $bid = 2;
-        $cid = $this->faker->randomElement([1,2,3]);
+        $status = $this->faker->randomElement([0,1]);
+
         return [
             'business_id' => $bid,
-            'city_id' => $cid,
-            'name' => $this->faker->name()
+            'text' => $this->faker->paragraph(),
+            'status' => $status,
         ];
     }
 }

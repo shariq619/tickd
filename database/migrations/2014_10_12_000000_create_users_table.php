@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('referal_code')->unique()->nullable();
             $table->string('avatar')->default('no-image.png');
+            $table->string('user_type')->default('user')->comment('user,business');
             $table->string('name');
             $table->string('username');
             $table->text('bio');
@@ -53,6 +54,26 @@ class CreateUsersTable extends Migration
 
         $user->remember_token = Str::random(10);
         $user->save();
+
+        // business user
+        $business = new User;
+        $business->referal_code = Str::random(10);
+        $business->name = "tickd_business";
+        $business->user_type = "business";
+        $business->username = "tickd_business";
+        $business->bio = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.";
+        $business->email = "tickd_business@email.com";
+        $business->email_verified_at = now();
+        $business->password = bcrypt("password");
+
+        $business->nationality = "British";
+        $business->dob = Carbon::now()->subDays(3000)->format('Y-m-d');
+        $business->mobile = "442045771138";
+        $business->gender = "male";
+        $business->status = 1;
+
+        $business->remember_token = Str::random(10);
+        $business->save();
     }
 
     /**

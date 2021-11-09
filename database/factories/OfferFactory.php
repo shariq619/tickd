@@ -14,12 +14,13 @@ class OfferFactory extends Factory
      */
     public function definition()
     {
-        $user_id = $this->faker->randomElement([1,2,3]);
+        //$user_id = $this->faker->randomElement([1,2,3]);
+        $bid = 2;
         $offer_smiles = $this->faker->randomElement([100,200,300]);
         $status = $this->faker->randomElement(['Redeemed','Active','Active']);
 
         return [
-            'user_id' => $user_id,
+            'business_id' => $bid,
             'offer_image' => '', // password
             'offer_name' => $this->faker->name(),
             'offer_smiles' => $offer_smiles,

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBadgesTable extends Migration
+class CreateDidYouKnowsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateBadgesTable extends Migration
      */
     public function up()
     {
-        Schema::create('badges', function (Blueprint $table) {
+        Schema::create('did_you_knows', function (Blueprint $table) {
             $table->id();
-
             $table->unsignedBigInteger('business_id');
-            $table->unsignedBigInteger('city_id')->nullable();
-            $table->string('name');
-            $table->string('image')->nullable();
+            $table->text('text');
+            $table->boolean('status')->default(false);
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateBadgesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('badges');
+        Schema::dropIfExists('did_you_knows');
     }
 }
