@@ -16,10 +16,10 @@ class BadgeFactory extends Factory
     {
         //$bid = $this->faker->randomElement(User::where('user_type','business')->first()->pluck('id'));
         $bid = 2;
-        $cid = $this->faker->randomElement([1,2,3]);
+        //$cid = $this->faker->randomElement([1,2,3]);
         return [
             'business_id' => $bid,
-            'city_id' => $cid,
+            //'city_id' => $cid,
             'name' => $this->faker->name()
         ];
     }

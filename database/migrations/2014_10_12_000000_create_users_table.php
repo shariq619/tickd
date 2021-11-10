@@ -19,6 +19,8 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('referal_code')->unique()->nullable();
+            $table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('business_type_id')->nullable();
             $table->string('avatar')->default('no-image.png');
             $table->string('user_type')->default('user')->comment('user,business');
             $table->string('name');
@@ -39,6 +41,7 @@ class CreateUsersTable extends Migration
 
         $user = new User;
         $user->referal_code = Str::random(10);
+
         $user->name = "tickd";
         $user->username = "tickd";
         $user->bio = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old.";
@@ -58,6 +61,8 @@ class CreateUsersTable extends Migration
         // business user
         $business = new User;
         $business->referal_code = Str::random(10);
+        $business->city_id = 1;
+        $business->business_type_id = 1;
         $business->name = "tickd_business";
         $business->user_type = "business";
         $business->username = "tickd_business";

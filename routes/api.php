@@ -38,6 +38,12 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('get-user-groups', [AuthController::class, 'getUserGroups']);
         Route::post('get-user-cities', [AuthController::class, 'getUserCities']);
 
+        Route::post('get-profile-interest', [AuthController::class, 'profileInterest']);
+
+
+
+        Route::post('get-user-didyouknow', [AuthController::class, 'getUserDidYouKnow']);
+
         Route::post('get-followers', [AuthController::class, 'getFollowers']);
 
         Route::post('follow-user', [AuthController::class, 'followUser']);

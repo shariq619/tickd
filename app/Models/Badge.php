@@ -10,21 +10,21 @@ class Badge extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $appends = ['city_name'];
+    //protected $appends = ['city_name'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function city()
+   /* public function city()
     {
         return $this->belongsTo(City::class);
-    }
+    }*/
 
-    public function getCityNameAttribute()
+    /*public function getCityNameAttribute()
     {
         return City::find($this->city_id)->name;
-    }
+    }*/
 
 }

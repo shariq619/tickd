@@ -18,8 +18,12 @@ class DatabaseSeeder extends Seeder
          \App\Models\Challenge::factory(5)->create();
          \App\Models\Offer::factory(5)->create();
          \App\Models\Badge::factory(5)->create();
-         \App\Models\UserBadge::factory(5)->create();
+         \App\Models\UserBadge::factory(1)->create();
          \App\Models\UserGroup::factory(5)->create();
          \App\Models\DidYouKnow::factory(5)->create();
+
+         \App\Models\Category::factory(5)->create();
+         \App\Models\BusinessType::factory(5)->create();
+         \App\Models\Sticker::factory(5)->create();
     }
 }

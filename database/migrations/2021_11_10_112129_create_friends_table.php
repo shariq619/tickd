@@ -1,10 +1,11 @@
 <?php
 
+use App\Models\Friend;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateBadgesTable extends Migration
+class CreateFriendsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +14,18 @@ class CreateBadgesTable extends Migration
      */
     public function up()
     {
-        Schema::create('badges', function (Blueprint $table) {
+        Schema::create('friends', function (Blueprint $table) {
             $table->id();
-
-            $table->unsignedBigInteger('business_id');
-            //$table->unsignedBigInteger('city_id')->nullable();
-            $table->string('name');
-            $table->string('image')->nullable();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('friend_id');
+            $table->boolean('accepted')->default(false);
             $table->timestamps();
         });
+
+        Friend::create([
+            'user_id' => 1,
+            'friend_id' => 3,
+        ]);
     }
 
     /**
@@ -31,6 +35,6 @@ class CreateBadgesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('badges');
+        Schema::dropIfExists('friends');
     }
 }

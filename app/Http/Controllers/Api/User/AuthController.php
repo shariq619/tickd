@@ -246,7 +246,10 @@ class AuthController extends Controller
                 return api_success("Get profile info", ['data' => $u]);
 
             } else {
-                $data = auth('api')->user();
+                $user = auth('api')->user();
+                $data = $user->load('friends');
+               // dd($user->friends);
+                //$data = auth('api')->user();
                 return api_success("Get profile info", ['data' => $data]);
             }
 
@@ -302,7 +305,14 @@ class AuthController extends Controller
         $badges = [];
         $user = auth('api')->user();
         $data = $user->load('user_badges.badge');
+
+
+
         foreach($data->user_badges as $badge){
+
+            $bu = User::find($badge->badge->business_id);
+            $badge->badge['city'] = $bu->city->name;
+
             unset($badge->badge->business_id);
             unset($badge->badge->created_at);
             unset($badge->badge->updated_at);
@@ -314,6 +324,7 @@ class AuthController extends Controller
             }
 
         }
+
         if(count($badges)){
             return api_success('Badges',$badges);
         } else {
@@ -372,11 +383,23 @@ class AuthController extends Controller
         }
     }
 
-    // Followers & Followings
+    public function profileInterest()
+    {
+        $user = auth('api')->user();
+        $data = $user->load('business','business_type','user_stickers');
+        return api_success('Profile Interest', $data);
+    }
 
+    public function getUserDidYouKnow()
+    {
+        $user = auth('api')->user();
+        $data = $user->load('user_did_you_knows.did_you_know');
+        return api_success('User did you know', $data);
+    }
+
+    // Followers & Followings
     public function getFollowers()
     {
-
         $user = auth('api')->user();
 
         $data = $user->load('followers');
