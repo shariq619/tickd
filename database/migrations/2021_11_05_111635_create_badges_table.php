@@ -17,7 +17,7 @@ class CreateBadgesTable extends Migration
             $table->id();
 
             $table->unsignedBigInteger('business_id');
-            //$table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('city_id')->nullable();
             $table->string('name');
             $table->string('image')->nullable();
             $table->timestamps();

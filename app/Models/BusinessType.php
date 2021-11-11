@@ -13,6 +13,9 @@ class BusinessType extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class, 'id')->where('user_type','business');
+        return $this->hasMany(User::class, 'id');
     }
+
+
+
 }

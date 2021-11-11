@@ -19,6 +19,10 @@ class CreateUsersTable extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('referal_code')->unique()->nullable();
+
+            $table->string('device_token')->nullable();
+            $table->string('device_type')->nullable();
+
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('business_type_id')->nullable();
             $table->string('avatar')->default('no-image.png');
@@ -41,6 +45,8 @@ class CreateUsersTable extends Migration
 
         $user = new User;
         $user->referal_code = Str::random(10);
+
+        $user->device_token = '';
 
         $user->name = "tickd";
         $user->username = "tickd";

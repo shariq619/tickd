@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserSticker extends Model
+class UserBusinessType extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function sticker()
+    public function business_type()
     {
-        return $this->belongsTo(Sticker::class);
+        return $this->belongsTo(User::class,'business_id');
     }
+
 
 }

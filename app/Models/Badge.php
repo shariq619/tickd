@@ -17,10 +17,17 @@ class Badge extends Model
         return $this->belongsTo(User::class);
     }
 
-   /* public function city()
+    public function city()
     {
         return $this->belongsTo(City::class);
-    }*/
+    }
+
+    public function business_user()
+    {
+        return $this->belongsTo(User::class,'business_id')->where('user_type','business');
+    }
+
+
 
     /*public function getCityNameAttribute()
     {

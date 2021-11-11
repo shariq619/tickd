@@ -1,12 +1,11 @@
 <?php
 
-use App\Models\Friend;
-use App\Models\User;
+use App\Models\UserBusinessType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFriendsTable extends Migration
+class CreateUserBusinessTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,18 +14,26 @@ class CreateFriendsTable extends Migration
      */
     public function up()
     {
-        Schema::create('friends', function (Blueprint $table) {
+        Schema::create('user_business_types', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('friend_id');
-            $table->boolean('accepted')->default(false);
+            $table->unsignedBigInteger('business_id');
             $table->timestamps();
         });
 
+       UserBusinessType::create([
+            'user_id' => 1,
+            'business_id' => 2
+       ]);
 
-
+        UserBusinessType::create([
+            'user_id' => 1,
+            'business_id' => 3
+        ]);
 
     }
+
+
 
     /**
      * Reverse the migrations.
@@ -35,6 +42,6 @@ class CreateFriendsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('friends');
+        Schema::dropIfExists('user_business_types');
     }
 }

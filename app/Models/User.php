@@ -38,9 +38,36 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function events()
+    public function user_events()
     {
-        return $this->hasMany(Event::class);
+        return $this->hasMany(UserEvent::class,'user_id');
+    }
+
+    public function business_events()
+    {
+        return $this->hasMany(Event::class,'business_id');
+    }
+
+
+
+    public function challenges()
+    {
+        return $this->hasMany(Challenge::class,'business_id');
+    }
+
+    public function user_challenges()
+    {
+        return $this->hasMany(UserChallenge::class,'user_id');
+    }
+
+    public function offers()
+    {
+        return $this->hasMany(Offer::class,'business_id');
+    }
+
+    public function user_offers()
+    {
+        return $this->hasMany(UserOffer::class,'user_id');
     }
 
     public function badges()
@@ -86,6 +113,11 @@ class User extends Authenticatable
         //->wherePivot('accepted', '=', 1);
     }
 
+    public function friend_requests()
+    {
+        return $this->belongsToMany(self::class, 'friends', 'user_id', 'friend_id')->wherePivot('accepted', '=', 0);
+    }
+
     public function user_stickers()
     {
         return $this->hasMany(UserSticker::class, 'user_id');
@@ -94,6 +126,12 @@ class User extends Authenticatable
     public function business_user()
     {
         return $this->hasOne(UserBusiness::class);
+    }
+
+
+    public function user_business_types()
+    {
+        return $this->hasMany(UserBusinessType::class);
     }
 
     public function business_type()
@@ -105,5 +143,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'id');
     }
+
+    /*public function business_type_data()
+    {
+        return $this->belongsTo(BusinessType::class, 'business_type_id');
+    }*/
 
 }

@@ -5,15 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserSticker extends Model
+class UserEvent extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function sticker()
+    public function event()
     {
-        return $this->belongsTo(Sticker::class);
+        return $this->belongsTo(Event::class);
     }
-
 }

@@ -40,6 +40,11 @@ Route::group(['prefix' => 'v1'], function () {
 
         Route::post('get-profile-interest', [AuthController::class, 'profileInterest']);
 
+        // Get Badge Profile By ID in short Business profile by id
+        Route::post('get-business-profile', [AuthController::class, 'getBusinessProfile']);
+
+        Route::post('friends-data', [AuthController::class, 'friendsData']);
+
 
 
         Route::post('get-user-didyouknow', [AuthController::class, 'getUserDidYouKnow']);

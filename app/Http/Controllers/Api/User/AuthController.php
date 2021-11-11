@@ -14,10 +14,14 @@ use App\Http\Requests\User\SendOtpRequest;
 use App\Http\Requests\User\SignupRequest;
 use App\Http\Requests\User\UpdateProfileInfoRequest;
 use App\Http\Requests\User\VerifyTokenRequest;
+use App\Models\BusinessType;
 use App\Models\Follower;
 use App\Models\StoreToken;
 use App\Models\User;
+use App\Models\UserBadge;
+use App\Notifications\PushNotification;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
@@ -162,6 +166,24 @@ class AuthController extends Controller
             $token = $tokenObj->accessToken;
             $user->makeHidden('tokens');
             $data = Arr::add($user->toArray(), 'token_detail', ['access_token' => $token, 'token_type' => 'Bearer']);
+
+
+            // firebase notifcation
+
+            /*$title = "hello there";
+            $body = "hello there";
+            $user->notify(new PushNotification(
+                $title,
+                $body,
+                [
+                    'data' => [
+                        'type' => 'order',
+                        'transaction_id' => 2,
+                    ],
+                ]
+            ));*/
+
+
             return api_success('Login Successfully', $data);
 
         } catch (\Exception $ex) {
@@ -386,8 +408,26 @@ class AuthController extends Controller
     public function profileInterest()
     {
         $user = auth('api')->user();
-        $data = $user->load('business','business_type','user_stickers');
+        $data = $user->load('user_business_types.business_type.business_type','user_stickers.sticker');
         return api_success('Profile Interest', $data);
+    }
+
+    public function getBusinessProfile(Request $request)
+    {
+        $bid = $request->badge_id;
+        $data = UserBadge::with('badge','user.user_events.event','user.user_challenges.challenge','user.user_offers.offer')->where('badge_id',$bid)->get();
+        // ,'badge.business_user.challenges','badge.business_user.offers'
+        return api_success('Badges Detail By ID', $data);
+    }
+
+    public function friendsData()
+    {
+        $user = auth('api')->user();
+        $data = $user->load('friend_requests');
+
+
+
+        return api_success('Find Friends', $data);
     }
 
     public function getUserDidYouKnow()

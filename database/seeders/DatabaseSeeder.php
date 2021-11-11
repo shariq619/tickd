@@ -25,5 +25,6 @@ class DatabaseSeeder extends Seeder
          \App\Models\Category::factory(5)->create();
          \App\Models\BusinessType::factory(5)->create();
          \App\Models\Sticker::factory(5)->create();
+         \App\Models\Friend::factory(5)->create();
     }
 }

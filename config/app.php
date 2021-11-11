@@ -1,5 +1,7 @@
 <?php
 
+
+
 return [
 
     /*
@@ -161,6 +163,7 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
+        App\Providers\NotificationChannelServiceProvider::class,
 
         /*
          * Package Service Providers...
