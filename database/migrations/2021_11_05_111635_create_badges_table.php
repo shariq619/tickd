@@ -16,10 +16,18 @@ class CreateBadgesTable extends Migration
         Schema::create('badges', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('business_id');
+            $table->unsignedBigInteger('business_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+
             $table->unsignedBigInteger('city_id')->nullable();
             $table->string('name');
             $table->string('image')->nullable();
+
+            $table->string('location')->nullable();
+            $table->string('duration')->nullable();
+            $table->integer('privacy')->nullable();
+
+
             $table->timestamps();
         });
     }

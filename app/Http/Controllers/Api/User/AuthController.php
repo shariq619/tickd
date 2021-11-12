@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\CheckUsernameRequest;
+use App\Http\Requests\User\CreateBadgeRequest;
 use App\Http\Requests\User\CreateProfileRequest;
 use App\Http\Requests\User\EditProfileRequest;
 use App\Http\Requests\User\ForgotPasswordRequest;
@@ -14,6 +15,7 @@ use App\Http\Requests\User\SendOtpRequest;
 use App\Http\Requests\User\SignupRequest;
 use App\Http\Requests\User\UpdateProfileInfoRequest;
 use App\Http\Requests\User\VerifyTokenRequest;
+use App\Models\Badge;
 use App\Models\BusinessType;
 use App\Models\Follower;
 use App\Models\StoreToken;
@@ -139,7 +141,7 @@ class AuthController extends Controller
         try {
 
             // for login with both username and password
-            if( $request->exists('username') && $request->filled('username')){
+            if ($request->exists('username') && $request->filled('username')) {
                 $credentials = request(['username', 'password']);
             } else {
                 $credentials = request(['email', 'password']);
@@ -206,7 +208,7 @@ class AuthController extends Controller
     public function createProfile(CreateProfileRequest $request)
     {
 
-        if(!auth('api')->check()){
+        if (!auth('api')->check()) {
             return api_error('Message: Login required');
         }
 
@@ -235,18 +237,18 @@ class AuthController extends Controller
     {
         if (auth('api')->check()) {
 
-            if(request()->filled('user_id')){
-                $user =  User::find(request()->user_id);
+            if (request()->filled('user_id')) {
+                $user = User::find(request()->user_id);
                 $data = $user->load('user_badges.badge');
 
-                foreach($data->user_badges as $badge){
+                foreach ($data->user_badges as $badge) {
                     unset($badge->badge->business_id);
                     unset($badge->badge->created_at);
                     unset($badge->badge->updated_at);
                     $badges[] = $badge->badge;
                 }
 
-                $u =   User::find(request()->user_id);
+                $u = User::find(request()->user_id);
                 $u['badges'] = $badges;
                 $u['total_badges'] = count($badges);
                 return api_success("Get profile info", ['data' => $u]);
@@ -254,7 +256,7 @@ class AuthController extends Controller
             } else {
                 $user = auth('api')->user();
                 $data = $user->load('friends');
-               // dd($user->friends);
+                // dd($user->friends);
                 //$data = auth('api')->user();
                 return api_success("Get profile info", ['data' => $data]);
             }
@@ -266,7 +268,7 @@ class AuthController extends Controller
 
     public function editProfile(EditProfileRequest $request)
     {
-        if(!auth('api')->check()){
+        if (!auth('api')->check()) {
             return api_error('Message: Login required');
         }
 
@@ -313,8 +315,7 @@ class AuthController extends Controller
         $data = $user->load('user_badges.badge');
 
 
-
-        foreach($data->user_badges as $badge){
+        foreach ($data->user_badges as $badge) {
 
             $bu = User::find($badge->badge->business_id);
             $badge->badge['city'] = $bu->city->name;
@@ -323,16 +324,16 @@ class AuthController extends Controller
             unset($badge->badge->created_at);
             unset($badge->badge->updated_at);
 
-            if(request()->filled('badge_id') && request()->badge_id == $badge->badge->id){
+            if (request()->filled('badge_id') && request()->badge_id == $badge->badge->id) {
                 $badges[] = $badge->badge;
-            } elseif(!request()->filled('badge_id')) {
+            } elseif (!request()->filled('badge_id')) {
                 $badges[] = $badge->badge;
             }
 
         }
 
-        if(count($badges)){
-            return api_success('Badges',$badges);
+        if (count($badges)) {
+            return api_success('Badges', $badges);
         } else {
             return api_error('Badges not found.');
         }
@@ -345,20 +346,20 @@ class AuthController extends Controller
         $user = auth('api')->user();
         $data = $user->load('user_groups');
 
-        foreach($data->user_groups as $group){
+        foreach ($data->user_groups as $group) {
             unset($group->user_id);
             unset($group->badge_id);
             unset($group->created_at);
             unset($group->updated_at);
 
-            if(request()->filled('group_id') && request()->group_id == $group->id){
+            if (request()->filled('group_id') && request()->group_id == $group->id) {
                 $groups[] = $group;
-            } elseif(!request()->filled('group_id')) {
+            } elseif (!request()->filled('group_id')) {
                 $groups[] = $group;
             }
         }
-        if(count($groups)){
-            return api_success('Groups',$groups);
+        if (count($groups)) {
+            return api_success('Groups', $groups);
         } else {
             return api_error('Groups not found.');
         }
@@ -370,20 +371,20 @@ class AuthController extends Controller
         $cities = [];
         $user = auth('api')->user();
         $data = $user->load('user_badges.badge.city');
-        foreach($data->user_badges as $badge){
+        foreach ($data->user_badges as $badge) {
             unset($badge->badge->city->created_at);
             unset($badge->badge->city->updated_at);
 
 
-            if(request()->filled('city_id') && request()->city_id == $badge->badge->city->id){
+            if (request()->filled('city_id') && request()->city_id == $badge->badge->city->id) {
                 $cities[] = $badge->badge->city;
-            } elseif(!request()->filled('city_id')) {
+            } elseif (!request()->filled('city_id')) {
                 $cities[] = $badge->badge->city;
             }
 
         }
-        if(count($cities)){
-            return api_success('Cities',array_unique($cities));
+        if (count($cities)) {
+            return api_success('Cities', array_unique($cities));
         } else {
             return api_error('Cities not found.');
         }
@@ -392,14 +393,14 @@ class AuthController extends Controller
     public function profileInterest()
     {
         $user = auth('api')->user();
-        $data = $user->load('user_business_types.business_type.business_type','user_stickers.sticker');
+        $data = $user->load('user_business_types.business_type.business_type', 'user_stickers.sticker');
         return api_success('Profile Interest', $data);
     }
 
     public function getBusinessProfile(Request $request)
     {
         $bid = $request->badge_id;
-        $data = UserBadge::with('badge','user.user_events.event','user.user_challenges.challenge','user.user_offers.offer')->where('badge_id',$bid)->get();
+        $data = UserBadge::with('badge', 'user.user_events.event', 'user.user_challenges.challenge', 'user.user_offers.offer')->where('badge_id', $bid)->get();
         // ,'badge.business_user.challenges','badge.business_user.offers'
         return api_success('Badges Detail By ID', $data);
     }
@@ -409,15 +410,15 @@ class AuthController extends Controller
         $tot = [];
         $suggested = [];
         $user = auth('api')->user();
-        $data = $user->load('friend_requests','friends');
+        $data = $user->load('friend_requests', 'friends');
 
-        foreach($data->friend_requests as $request){
+        foreach ($data->friend_requests as $request) {
             $tot[] = $request;
         }
 
         // for suggested friends
         $sug_friends = DB::select(
-                    "SELECT
+            "SELECT
             a.friend_id,
             COUNT(*) as relevance,
             GROUP_CONCAT(a.user_id ORDER BY a.user_id) as mutual_friends
@@ -427,27 +428,27 @@ class AuthController extends Controller
             friends b
             ON  (
              b.friend_id = a.user_id
-             AND b.user_id = ".auth('api')->user()->id."
+             AND b.user_id = " . auth('api')->user()->id . "
             )
             LEFT JOIN
             friends c
             ON
             (
              c.friend_id = a.friend_id
-             AND c.user_id = ".auth('api')->user()->id."
+             AND c.user_id = " . auth('api')->user()->id . "
             )
             WHERE
             c.user_id IS NULL
             AND
-            a.friend_id != ".auth('api')->user()->id."
+            a.friend_id != " . auth('api')->user()->id . "
             GROUP BY
             a.friend_id
             ORDER BY
             relevance DESC"
         );
 
-        foreach($sug_friends as $sug_friend){
-            $suggested[] = User::where('id',$sug_friend->friend_id)->get();
+        foreach ($sug_friends as $sug_friend) {
+            $suggested[] = User::where('id', $sug_friend->friend_id)->get();
         }
 
         $data['suggested_friends'] = $suggested;
@@ -476,14 +477,14 @@ class AuthController extends Controller
     public function followUser()
     {
         $follow = false;
-        if(request()->filled('follower_id')){
+        if (request()->filled('follower_id')) {
             // check if its already following or not
-            $f = Follower::where('follower_id',auth('api')->user()->id)->where('leader_id',request()->follower_id)->first();
+            $f = Follower::where('follower_id', auth('api')->user()->id)->where('leader_id', request()->follower_id)->first();
 
-            if($f){
+            if ($f) {
                 return api_error('Already following.');
             } else {
-                $follow =  Follower::create([
+                $follow = Follower::create([
                     'follower_id' => auth('api')->user()->id,
                     'leader_id' => request()->follower_id
                 ]);
@@ -492,7 +493,7 @@ class AuthController extends Controller
                 //$ago = \Carbon\Carbon::createFromTimeStamp(strtotime($follow->created_at))->diffForHumans();
                 $u = User::find(request()->follower_id);
                 $title = "Follow Notification";
-                $body = "@".auth('api')->user()->username.' - follows you';
+                $body = "@" . auth('api')->user()->username . ' - follows you';
                 $u->notify(new PushNotification(
                     $title,
                     $body
@@ -502,8 +503,8 @@ class AuthController extends Controller
             }
         }
 
-        if($follow){
-            return api_success('Successfully following',$follow);
+        if ($follow) {
+            return api_success('Successfully following', $follow);
         } else {
             return api_error('Failed to follow.');
         }
@@ -515,6 +516,23 @@ class AuthController extends Controller
 
         $data = $user->load('followings');
         return api_success('Followings', $data);
+    }
+
+    //
+    public function createUserBadge(CreateBadgeRequest $request)
+    {
+        if (auth('api')->check()) {
+            Badge::create([
+                'user_id' => auth('api')->user()->id,
+                'name' => $request->name,
+                'location' => $request->location,
+                'duration' => $request->duration,
+                'privacy' => $request->privacy,
+            ]);
+            return api_success('Badge', 'Badge created successfully');
+        } else {
+            return api_error('PLease login first');
+        }
     }
 
 }

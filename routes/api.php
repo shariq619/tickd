@@ -33,30 +33,21 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('create-profile', [AuthController::class, 'createProfile']);
         Route::post('get-profile', [AuthController::class, 'getProfile']);
         Route::post('edit-profile', [AuthController::class, 'editProfile']);
-
         Route::post('get-user-badges', [AuthController::class, 'getUserBadges']);
         Route::post('get-user-groups', [AuthController::class, 'getUserGroups']);
         Route::post('get-user-cities', [AuthController::class, 'getUserCities']);
-
         Route::post('get-profile-interest', [AuthController::class, 'profileInterest']);
-
         // Get Badge Profile By ID in short Business profile by id
         Route::post('get-business-profile', [AuthController::class, 'getBusinessProfile']);
-
         Route::post('friends-data', [AuthController::class, 'friendsData']);
-
-
-
         Route::post('get-user-didyouknow', [AuthController::class, 'getUserDidYouKnow']);
-
         Route::post('get-followers', [AuthController::class, 'getFollowers']);
-
         Route::post('follow-user', [AuthController::class, 'followUser']);
-
         Route::post('get-followings', [AuthController::class, 'getFollowings']);
-
         Route::post('logout', [AuthController::class, 'logout']);
 
+        // extra apis
+        Route::post('create-user-badge', [AuthController::class, 'createUserBadge']);
 
         // events
         Route::post('get-events', [EventController::class, 'getEvents']);
@@ -67,15 +58,8 @@ Route::group(['prefix' => 'v1'], function () {
         // offers
         Route::post('get-offers', [OfferController::class, 'getOffers']);
 
-        /*
-        Route::post('verify-token', [AuthController::class, 'verifyToken']);
 
-        Route::post('resend-otp', [AuthController::class, 'resendOtp']);
-        Route::post('update-profile', [AuthController::class, 'updateProfile']);
-        Route::post('get-profile', [AuthController::class, 'getProfile']);
-        Route::post('contact-us', [AuthController::class, 'contactUs']);
-        Route::post('change-password', [AuthController::class, 'changePassword']);
-        Route::post('logout', [AuthController::class, 'logout']);*/
+
     });
 
 });
