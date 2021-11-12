@@ -24,6 +24,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -166,23 +167,6 @@ class AuthController extends Controller
             $token = $tokenObj->accessToken;
             $user->makeHidden('tokens');
             $data = Arr::add($user->toArray(), 'token_detail', ['access_token' => $token, 'token_type' => 'Bearer']);
-
-
-            // firebase notifcation
-
-            /*$title = "hello there";
-            $body = "hello there";
-            $user->notify(new PushNotification(
-                $title,
-                $body,
-                [
-                    'data' => [
-                        'type' => 'order',
-                        'transaction_id' => 2,
-                    ],
-                ]
-            ));*/
-
 
             return api_success('Login Successfully', $data);
 
@@ -422,11 +406,54 @@ class AuthController extends Controller
 
     public function friendsData()
     {
+        $tot = [];
+        $suggested = [];
         $user = auth('api')->user();
-        $data = $user->load('friend_requests');
+        $data = $user->load('friend_requests','friends');
 
+        foreach($data->friend_requests as $request){
+            $tot[] = $request;
+        }
 
+        // for suggested friends
+        $sug_friends = DB::select(
+                    "SELECT
+            a.friend_id,
+            COUNT(*) as relevance,
+            GROUP_CONCAT(a.user_id ORDER BY a.user_id) as mutual_friends
+            FROM
+            friends a
+            JOIN
+            friends b
+            ON  (
+             b.friend_id = a.user_id
+             AND b.user_id = ".auth('api')->user()->id."
+            )
+            LEFT JOIN
+            friends c
+            ON
+            (
+             c.friend_id = a.friend_id
+             AND c.user_id = ".auth('api')->user()->id."
+            )
+            WHERE
+            c.user_id IS NULL
+            AND
+            a.friend_id != ".auth('api')->user()->id."
+            GROUP BY
+            a.friend_id
+            ORDER BY
+            relevance DESC"
+        );
 
+        foreach($sug_friends as $sug_friend){
+            $suggested[] = User::where('id',$sug_friend->friend_id)->get();
+        }
+
+        $data['suggested_friends'] = $suggested;
+        $data['total_requests'] = count($tot);
+
+        $data['total_requests'] = count($tot);
         return api_success('Find Friends', $data);
     }
 
@@ -460,6 +487,18 @@ class AuthController extends Controller
                     'follower_id' => auth('api')->user()->id,
                     'leader_id' => request()->follower_id
                 ]);
+
+                // firebase notification to the user who is followed by this user
+                //$ago = \Carbon\Carbon::createFromTimeStamp(strtotime($follow->created_at))->diffForHumans();
+                $u = User::find(request()->follower_id);
+                $title = "Follow Notification";
+                $body = "@".auth('api')->user()->username.' - follows you';
+                $u->notify(new PushNotification(
+                    $title,
+                    $body
+                ));
+
+
             }
         }
 

@@ -108,7 +108,7 @@ class User extends Authenticatable
 
     public function friends()
     {
-        return $this->belongsToMany(self::class, 'friends', 'user_id', 'friend_id');
+        return $this->belongsToMany(self::class, 'friends', 'user_id', 'friend_id')->wherePivot('accepted', '=', 1);
         // if you want to rely on accepted field, then add this:
         //->wherePivot('accepted', '=', 1);
     }

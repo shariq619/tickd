@@ -44,6 +44,7 @@ class PushNotification extends Notification {
 			'data' => $this->data,
 		];
 	}
+
 	public function toFirebase($notifiable) {
 		return [
 			'notification' => [
